@@ -6,8 +6,6 @@ All notable changes to `careof` are documented here. The format follows
 
 ## [Unreleased]
 
-- Added the optional `fetch` extra and `careof-url` command for fetching pages over HTTP(S).
-
 ## [0.1.0] - 2026-11-02
 
 ### Added
@@ -21,5 +19,16 @@ All notable changes to `careof` are documented here. The format follows
 - GLiNER extractor with chunking and offset translation.
 - Heuristic extractor for machines without the model extra.
 - Optional libpostal parsing and address expansion.
+- HTTP client for libpostal REST services, including Docker-hosted deployments.
+- Optional `fetch` extra and `careof-url` command for extracting from HTTP(S) pages.
 - Deduplication, confidence scoring, provenance, and ranked output.
 - `careof` CLI and `python -m careof` entry points.
+- Country-name signals from the `pycountry` ISO catalog.
+- International street/postal-code heuristics, including German and Canadian formats.
+- Country-specific regression fixtures for real HTML pages.
+
+### Changed
+
+- Supported Python versions are 3.10–3.13, matching `pyre2-updated` wheel availability.
+- Regex fallback to Python's backtracking engine is disabled.
+- Address spans stop at complete postal lines and avoid absorbing nearby business hours.
