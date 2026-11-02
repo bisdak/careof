@@ -159,7 +159,7 @@ HTML offsets refer to `careof`'s normalised text, not the original HTML byte str
 
 1. **Adapters** — `lxml` parses HTML; a block-aware serializer puts newlines at block boundaries so `<br>` and `<div>` do not glue street and city together. Markdown and plain text are split into paragraphs. Code fences and inline code are masked with spaces, preserving offsets.
 2. **Structured signals** — JSON-LD `PostalAddress`, microdata, `<address>`, `og:street-address` & friends, and Google/Apple Maps links are collected first. These are cheap and more reliable than any model.
-3. **Candidates** — `re2` finds house-number + street-suffix patterns, PO boxes, postal codes, and English landmark phrases, then keeps a few hundred characters of context. Same regexes score whole blocks for contact-page signals.
+3. **Candidates** — `re2` finds house-number + street-suffix patterns, PO boxes, postal codes, and English landmark phrases, then keeps a few hundred characters of context. Country-name signals are generated from `pycountry`'s ISO catalog, with common aliases such as `USA` and `UK`.
 4. **Extraction** — GLiNER runs only on those windows, chunked with overlap. The no-model fallback uses the same patterns to return line-level spans.
 5. **Parsing** — libpostal parses each candidate and `expand_address` supplies the dedupe key.
 6. **Merge** — exact keys, then conservative token-subset matching; components and provenance are combined and results are ranked.

@@ -45,3 +45,9 @@ def test_navigation_blocks_are_not_candidates() -> None:
 def test_score_prefers_address_blocks() -> None:
     assert score_block("123 Mabini Street, Makati City 1223") >= 4
     assert score_block("Home About Contact") < 2
+
+
+def test_country_signal_uses_country_catalog_and_common_aliases() -> None:
+    assert score_block("Austria") == 1.0
+    assert score_block("United States") == 1.0
+    assert score_block("UK") == 1.0

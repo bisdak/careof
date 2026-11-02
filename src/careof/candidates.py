@@ -7,6 +7,7 @@ GLiNER to work with, and it keeps a whole homepage from being tokenised.
 
 from __future__ import annotations
 
+import pycountry
 import re2
 
 from .adapters.base import Document
@@ -31,16 +32,26 @@ GERMAN_STREET = re2.compile(
 )
 POBOX = re2.compile(r"(?i)\b(?:p\.?\s*o\.?\s*box|post office box)\s*\d+\b")
 UNIT = re2.compile(
-    r"(?i)\b(?:unit|suite|ste\.?|floor|fl\.?|room|rm\.?|bldg\.?|building|tower)"
+    r"(?i)\b(?:(?:unit|suite|floor|room|building|tower)\b|(?:ste|fl|rm|bldg)\.?)"
     r"\s*#?\s*[A-Za-z0-9-]+\b"
 )
 POSTCODE = re2.compile(r"\b\d{4,5}(?:-\d{4})?\b")
 POSTAL_5 = re2.compile(r"\b\d{5}(?:-\d{4})?\b")
-COUNTRY = re2.compile(
-    r"(?i)\b(?:philippines|united states|usa|canada|australia|"
-    r"united kingdom|uk|singapore|japan|malaysia|indonesia|thailand|"
-    r"vietnam|india|new zealand|germany|france|spain|italy|netherlands)\b"
+_COUNTRY_NAMES = {
+    name
+    for country in pycountry.countries
+    for name in (
+        getattr(country, "name", None),
+        getattr(country, "official_name", None),
+        getattr(country, "common_name", None),
+    )
+    if name
+}
+_COUNTRY_NAMES.update({"USA", "UK"})
+_COUNTRY_ALTERNATION = "|".join(
+    re2.escape(name) for name in sorted(_COUNTRY_NAMES, key=lambda name: (-len(name), name))
 )
+COUNTRY = re2.compile(rf"(?i)\b(?:{_COUNTRY_ALTERNATION})\b")
 CONTACT = re2.compile(
     r"(?i)\b(?:address|contact|office|headquarters|location|visit us|"
     r"find us|where we are|mailing)\b"

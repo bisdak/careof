@@ -30,6 +30,7 @@ classifiers = [
 dependencies = [
   "lxml>=5.0",
   "pyre2-updated>=0.3.9.post1",
+  "pycountry>=24.6",
 ]
 
 [project.optional-dependencies]
