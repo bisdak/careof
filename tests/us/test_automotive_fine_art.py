@@ -18,6 +18,6 @@ def test_extracts_automotive_fine_art_address_without_notice_text() -> None:
         parser=NullParser(),
     )
 
-    complete = [address.raw for address in results if "9341 N. NYBERG RD." in address.raw]
-    assert "9341 N. NYBERG RD., HAYWARD, WI 54843-6635" in complete
-    assert all("UNDER CONSTRUCTION" not in raw for raw in complete)
+    assert [address.raw for address in results] == [
+        "9341 N. NYBERG RD., HAYWARD, WI 54843-6635"
+    ]

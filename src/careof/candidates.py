@@ -22,6 +22,7 @@ STREET_SUFFIX = (
 
 HOUSE_NUMBER = r"\b\d{1,6}[A-Za-z]?(?:[-/]\d{1,6}[A-Za-z]?)?\b"
 
+STREET_SUFFIX_RE = re2.compile(rf"(?i)\b{STREET_SUFFIX}\b")
 STRONG = re2.compile(
     rf"(?i){HOUSE_NUMBER}[^\n]{{0,80}}?\b{STREET_SUFFIX}\b"
 )
@@ -241,14 +242,7 @@ def address_line_span(
             line_start = nearest_start
 
     first_line = text[line_start:line_end]
-    postal_match = POSTCODE.search(first_line)
-    complete_on_first_line = bool(
-        postal_match
-        and (
-            postal_match.group(0)[0].isalpha()
-            or any(char.isalpha() for char in first_line[: postal_match.start()])
-        )
-    )
+    complete_on_first_line = _has_complete_postal_code(first_line)
 
     taken = 1
     while taken < max_lines and not complete_on_first_line:
@@ -290,3 +284,22 @@ def address_line_span(
         return start, end
     offset = line_start + len(segment) - len(segment.lstrip())
     return offset, offset + len(body)
+
+
+def _has_complete_postal_code(line: str) -> bool:
+    """Recognize a completed postal line without treating house numbers as ZIPs."""
+    for match in POSTCODE.finditer(line):
+        code = match.group(0)
+        if code[0].isalpha():
+            return True
+        if len(code) < 4:
+            continue
+        before = line[: match.start()]
+        after = line[match.end() :]
+        if STREET_SUFFIX_RE.search(after):
+            continue
+        if any(char.isalpha() for char in before) or any(
+            char.isalpha() for char in after
+        ):
+            return True
+    return False

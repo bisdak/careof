@@ -14,6 +14,9 @@ All notable changes to `careof` are documented here. The format follows
   with an Ardent IFA fixture test.
 - Added a US address fixture and prevent four-digit house numbers from being
   mistaken for complete postal codes during span expansion.
+- Added the corrected Tucson business address fixture and regression test.
+- Added the AutomotiveFineArt fixture and trim `<address>` contents after the
+  postal line to avoid retaining unrelated notices.
 
 ### Fixed
 
