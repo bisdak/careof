@@ -1,0 +1,70 @@
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "careof"
+dynamic = ["version"]
+description = "Find and parse postal addresses in HTML, Markdown, and plain text."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "careof contributors" }]
+keywords = ["address", "extraction", "html", "markdown", "libpostal", "gliner"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3.14",
+  "Topic :: Text Processing :: Markup :: HTML",
+  "Topic :: Text Processing :: Linguistic",
+  "Typing :: Typed",
+]
+dependencies = [
+  "lxml>=5.0",
+  "google-re2>=1.1",
+]
+
+[project.optional-dependencies]
+model = ["gliner>=0.2.29"]
+postal = ["postal>=1.1.11"]
+dev = [
+  "pytest>=8.0",
+  "ruff>=0.6",
+  "build>=1.2",
+  "twine>=5.0",
+]
+
+[project.scripts]
+careof = "careof.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/bisdak/careof"
+Repository = "https://github.com/bisdak/careof"
+Issues = "https://github.com/bisdak/careof/issues"
+Changelog = "https://github.com/bisdak/careof/blob/main/CHANGELOG.md"
+
+[tool.setuptools.dynamic]
+version = { attr = "careof._version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+careof = ["py.typed"]
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
