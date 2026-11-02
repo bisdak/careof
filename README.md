@@ -151,10 +151,6 @@ HTML offsets refer to `careof`'s normalised text, not the original HTML byte str
 - **libpostal is a parser, not an extractor.** It expects an address, so it runs after candidate extraction, never on a whole page.
 - **Structured data wins ties.** A JSON-LD `PostalAddress` outranks anything the model produces.
 
-## Philippine addresses
-
-Landmark-based addresses are first-class candidates: `Sa likod ng simbahan, Brgy. San Lorenzo, Makati City` has no street number, so `barangay`, `purok`, `sitio`, and landmark phrases (`sa likod ng`, `sa tabi ng`, `malapit sa`) are used as signals. GLiNER's general checkpoints are weaker here; the heuristic pass exists partly to cover that gap.
-
 ## Limitations
 
 - No geocoding. This extracts text, it does not resolve coordinates.
