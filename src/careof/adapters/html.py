@@ -86,6 +86,10 @@ OG_MAP = {    "og:street-address": "street",
 _WS = re2.compile(r"\s+")
 _HS = re2.compile(r"[ \t]+")
 _NEWLINES = re2.compile(r"\n{2,}")
+_POSTAL_CODE = re2.compile(
+    r"(?i)\b(?:\d{5}(?:-\d{4})?|[A-Z]\d[A-Z][ -]?\d[A-Z]\d|"
+    r"(?:[A-Z]{1,2}\d[A-Z\d]?|GIR)[ -]?\d[A-Z]{2})\b"
+)
 _ADDRESS_HINT = re2.compile(
     r"(?i)\b(?:street|st\.?|avenue|ave\.?|road|rd\.?|boulevard|blvd\.?|"
     r"lane|drive|unit|suite|floor|city|"
@@ -565,6 +569,14 @@ def _clean_address_tag(value: str) -> str:
     # that look like a name rather than an address.
     while len(lines) > 1 and not _ADDRESS_HINT.search(lines[0]):
         lines.pop(0)
+
+    # Address tags may also wrap hours or notices. Stop after the postal line
+    # instead of treating the rest of the element as part of the address.
+    for index, line in enumerate(lines):
+        match = _POSTAL_CODE.search(line)
+        if match and (match.start() > 0 or match.group(0)[0].isalpha()):
+            lines = lines[: index + 1]
+            break
     return ", ".join(lines)
 
 

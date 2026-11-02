@@ -241,8 +241,13 @@ def address_line_span(
             line_start = nearest_start
 
     first_line = text[line_start:line_end]
-    complete_on_first_line = bool(POSTCODE.search(first_line)) and any(
-        char.isalpha() for char in first_line
+    postal_match = POSTCODE.search(first_line)
+    complete_on_first_line = bool(
+        postal_match
+        and (
+            postal_match.group(0)[0].isalpha()
+            or any(char.isalpha() for char in first_line[: postal_match.start()])
+        )
     )
 
     taken = 1

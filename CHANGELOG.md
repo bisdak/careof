@@ -8,6 +8,8 @@ All notable changes to `careof` are documented here. The format follows
 
 - Added UK postcode and street-type recognition, plus premise/floor-line context,
   with an Ardent IFA fixture test.
+- Added a US address fixture and prevent four-digit house numbers from being
+  mistaken for complete postal codes during span expansion.
 
 ## [0.1.0] - 2026-11-02
 
