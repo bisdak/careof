@@ -14,7 +14,8 @@ from .adapters.base import Document
 from .schema import Block, Candidate
 
 STREET_SUFFIX = (
-    r"(?:street|st\.?|avenue|ave\.?|road|rd\.?|broadway|boulevard|blvd\.?|lane|ln\.?|"
+    r"(?:street|st\.?|avenue|ave\.?|road|rd\.?|broadway|green|close|crescent|"
+    r"grove|mews|gardens|boulevard|blvd\.?|lane|ln\.?|"
     r"drive|dr\.?|court|ct\.?|highway|hwy\.?|parkway|pkwy\.?|place|pl\.?|"
     r"terrace|ter\.?|circle|cir\.?|square|sq\.?|trail|trl\.?|route|rte\.?)"
 )
@@ -36,7 +37,8 @@ UNIT = re2.compile(
     r"\s*#?\s*[A-Za-z0-9-]+\b"
 )
 POSTCODE = re2.compile(
-    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b)"
+    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b|"
+    r"\b(?:[A-Z]{1,2}\d[A-Z\d]?|GIR)[ -]?\d[A-Z]{2}\b)"
 )
 _COUNTRY_NAMES = {
     name
@@ -67,7 +69,8 @@ NOISE = re2.compile(
 )
 TRAILING_PUNCT = re2.compile(r"\s[.,;:]$")
 POSTCODE_PERIOD = re2.compile(
-    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b)\."
+    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b|"
+    r"\b(?:[A-Z]{1,2}\d[A-Z\d]?|GIR)[ -]?\d[A-Z]{2}\b)\."
 )
 NOISE_INLINE = re2.compile(
     r"(?i)\s(?:contact|email|e-mail|tel|telephone|phone|fax|mobile)\b.*$"
