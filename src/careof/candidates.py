@@ -14,7 +14,7 @@ from .adapters.base import Document
 from .schema import Block, Candidate
 
 STREET_SUFFIX = (
-    r"(?:street|st\.?|avenue|ave\.?|road|rd\.?|boulevard|blvd\.?|lane|ln\.?|"
+    r"(?:street|st\.?|avenue|ave\.?|road|rd\.?|broadway|boulevard|blvd\.?|lane|ln\.?|"
     r"drive|dr\.?|court|ct\.?|highway|hwy\.?|parkway|pkwy\.?|place|pl\.?|"
     r"terrace|ter\.?|circle|cir\.?|square|sq\.?|trail|trl\.?|route|rte\.?)"
 )
