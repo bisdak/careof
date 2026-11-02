@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import sys
 from pathlib import Path
 
@@ -24,6 +25,11 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--url", help="base URL, used for content-type hints and metadata")
     parser.add_argument("--country", help="country hint for libpostal, e.g. ph or us")
     parser.add_argument("--language", help="language hint for libpostal, e.g. en")
+    parser.add_argument(
+        "--libpostal-url",
+        default=os.environ.get("CAREOF_LIBPOSTAL_URL"),
+        help="libpostal REST base URL (or set CAREOF_LIBPOSTAL_URL)",
+    )
     parser.add_argument("--threshold", type=float, default=0.4)
     parser.add_argument(
         "--extractor",
@@ -47,6 +53,7 @@ def main(argv: list[str] | None = None) -> int:
     kwargs = {
         "language": args.language,
         "country": args.country,
+        "libpostal_url": args.libpostal_url,
         "threshold": args.threshold,
         "extractor": extractor,
         "max_candidates": args.max_candidates,

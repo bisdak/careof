@@ -9,10 +9,10 @@ from .adapters import load_document
 from .candidates import build_candidates
 from .merge import make_address, merge
 from .ner import DEFAULT_LABELS, Extractor, plausible, resolve
-from .parse import NullParser, PostalParser
+from .parse import LibpostalHTTPParser, NullParser, PostalParser
 from .schema import Address
 
-PARSER = PostalParser | NullParser
+PARSER = PostalParser | LibpostalHTTPParser | NullParser
 
 
 def extract(
@@ -22,6 +22,7 @@ def extract(
     url: str | None = None,
     language: str | None = None,
     country: str | None = None,
+    libpostal_url: str | None = None,
     threshold: float = 0.4,
     labels: Sequence[str] = DEFAULT_LABELS,
     extractor: Extractor | str | None = "auto",
@@ -38,7 +39,12 @@ def extract(
     document = load_document(source, content_type, url=url, language=language)
     lang = language or document.meta.get("language")
     if parser is None:
-        parser = PostalParser(language=lang, country=country)
+        if libpostal_url:
+            parser = LibpostalHTTPParser(
+                libpostal_url, language=lang, country=country
+            )
+        else:
+            parser = PostalParser(language=lang, country=country)
 
     addresses: list[Address] = []
 

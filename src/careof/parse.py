@@ -8,8 +8,11 @@ still useful without it.
 
 from __future__ import annotations
 
+import json
 from collections.abc import Mapping
 from functools import lru_cache
+from urllib.error import HTTPError, URLError
+from urllib.request import Request, urlopen
 
 import re2
 
@@ -102,6 +105,107 @@ class PostalParser:
         except Exception:  # noqa: BLE001 - expansion failures are non-fatal
             return None
         return expansions[0] if expansions else None
+
+    def key(
+        self,
+        raw: str,
+        components: Mapping[str, str] | None = None,
+        *,
+        language: str | None = None,
+    ) -> str:
+        expanded = self.expand(raw, language=language)
+        if expanded:
+            return normalize_key(expanded)
+        if components:
+            values = [components[k] for k in COMPONENT_ORDER if components.get(k)]
+            values.extend(
+                v for k, v in components.items() if k not in COMPONENT_ORDER and v
+            )
+            return normalize_key(" ".join(str(v) for v in values))
+        return normalize_key(raw)
+
+
+class LibpostalHTTPParser:
+    """Client for REST wrappers such as ``oozman/libpostal-rest``.
+
+    The wrapper exposes ``POST /parser`` and ``POST /expand`` with a JSON
+    ``{"query": "..."}`` body. Unlike :class:`PostalParser`, this talks to a
+    service and does not need local libpostal bindings or data.
+    """
+
+    name = "libpostal-http"
+    available = True
+
+    def __init__(
+        self,
+        base_url: str = "http://127.0.0.1:8080",
+        language: str | None = None,
+        country: str | None = None,
+        timeout: float = 3.0,
+    ) -> None:
+        self.base_url = base_url.rstrip("/")
+        self.language = language
+        self.country = country
+        self.timeout = timeout
+
+    def _request(
+        self,
+        endpoint: str,
+        raw: str,
+        *,
+        hints: bool = True,
+        language: str | None = None,
+        country: str | None = None,
+    ) -> object | None:
+        payload: dict[str, str] = {"query": raw}
+        if hints:
+            if language or self.language:
+                payload["language"] = language or self.language or ""
+            if country or self.country:
+                payload["country"] = country or self.country or ""
+        request = Request(
+            f"{self.base_url}/{endpoint.lstrip('/')}",
+            data=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json", "Accept": "application/json"},
+            method="POST",
+        )
+        try:
+            with urlopen(request, timeout=self.timeout) as response:
+                return json.loads(response.read())
+        except (HTTPError, URLError, TimeoutError, OSError, ValueError):
+            return None
+
+    def parse(
+        self,
+        raw: str,
+        *,
+        language: str | None = None,
+        country: str | None = None,
+    ) -> dict[str, str]:
+        raw = raw.strip()
+        if not raw:
+            return {}
+        body = self._request(
+            "parser", raw, language=language, country=country
+        )
+        if not isinstance(body, list):
+            return {}
+        components = {
+            str(item["label"]): str(item["value"])
+            for item in body
+            if isinstance(item, dict) and item.get("label") and item.get("value")
+        }
+        return normalize_components(components)
+
+    def expand(self, raw: str, *, language: str | None = None) -> str | None:
+        if not raw.strip():
+            return None
+        body = self._request("expand", raw.strip(), hints=False)
+        if isinstance(body, list):
+            for item in body:
+                if isinstance(item, str) and item.strip():
+                    return item.strip()
+        return None
 
     def key(
         self,

@@ -9,6 +9,7 @@ if hasattr(_re2, "set_fallback_notification"):
     _re2.set_fallback_notification(_re2.FALLBACK_EXCEPTION)
 
 from ._version import __version__
+from .parse import LibpostalHTTPParser
 from .pipeline import extract, extract_file
 from .schema import Address, Block, Candidate, Span, StructuredAddress
 
@@ -16,6 +17,7 @@ __all__ = [
     "Address",
     "Block",
     "Candidate",
+    "LibpostalHTTPParser",
     "Span",
     "StructuredAddress",
     "__version__",

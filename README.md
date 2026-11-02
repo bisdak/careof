@@ -73,7 +73,14 @@ sudo make install
 sudo ldconfig
 ```
 
-Without libpostal, `careof` still returns `raw` addresses and works as an extractor; it just cannot split them into components. This is checked at import time, not at call time.
+Alternatively, connect to a libpostal REST service such as `oozman/libpostal-rest`. No local `postal` bindings are needed for HTTP mode:
+
+```console
+careof page.html --country at --language de \
+  --libpostal-url http://127.0.0.1:8080
+```
+
+Set `CAREOF_LIBPOSTAL_URL` to use the service by default with the CLI. The REST adapter calls `POST /parser` for components and `POST /expand` for deduplication keys. Without either a local installation or a configured REST service, `careof` still returns raw address strings but leaves `components` empty.
 
 ### Python version
 
@@ -92,9 +99,10 @@ addresses = careof.extract(
     url=None,
     language="en",
     country="ph",
+    libpostal_url=None,      # e.g. "http://127.0.0.1:8080" for REST mode
     threshold=0.4,          # GLiNER span threshold
     extractor="auto",       # "auto" | "gliner" | "heuristic" | None
-    parser=None,            # defaults to libpostal, or NullParser()
+    parser=None,            # local bindings by default; set libpostal_url for REST
     structured=True,        # use JSON-LD, microdata, <address>, og:*, maps links
 )
 ```
@@ -107,14 +115,29 @@ from careof.parse import NullParser
 addresses = careof.extract(html, "text/html", parser=NullParser())
 ```
 
+Or pass a REST URL directly:
+
+```python
+addresses = careof.extract(
+    html,
+    "text/html",
+    language="de",
+    country="at",
+    libpostal_url="http://127.0.0.1:8080",
+)
+```
+
 ### CLI
 
 ```console
 careof page.html
 careof contact.md --country ph
+careof page.html --country at --language de --libpostal-url http://127.0.0.1:8080
 cat page.html | careof - --content-type text/html
 careof page.html --extractor heuristic --ndjson
 ```
+
+The REST URL can also be set once with `export CAREOF_LIBPOSTAL_URL=http://127.0.0.1:8080`.
 
 `--extractor none` keeps only structured matches. JSON is pretty-printed by default; `--ndjson` emits one object per line.
 
