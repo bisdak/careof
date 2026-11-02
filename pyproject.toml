@@ -7,7 +7,7 @@ name = "careof"
 dynamic = ["version"]
 description = "Find and parse postal addresses in HTML, Markdown, and plain text."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.10,<3.14"
 license = "MIT"
 license-files = ["LICENSE"]
 authors = [{ name = "careof contributors" }]
@@ -23,14 +23,13 @@ classifiers = [
   "Programming Language :: Python :: 3.11",
   "Programming Language :: Python :: 3.12",
   "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3.14",
   "Topic :: Text Processing :: Markup :: HTML",
   "Topic :: Text Processing :: Linguistic",
   "Typing :: Typed",
 ]
 dependencies = [
   "lxml>=5.0",
-  "google-re2>=1.1",
+  "pyre2-updated>=0.3.9.post1",
 ]
 
 [project.optional-dependencies]

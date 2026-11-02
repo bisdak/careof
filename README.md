@@ -77,7 +77,7 @@ Without libpostal, `careof` still returns `raw` addresses and works as an extrac
 
 ### Python version
 
-Core supports Python 3.10+. For the model extra, prefer 3.12 or 3.13 until the whole torch/spaCy-adjacent ecosystem has settled on newer wheels. `careof` does **not** depend on spaCy.
+Core supports Python 3.10–3.13. `pyre2-updated` currently provides wheels through Python 3.13; Python 3.14 is not supported yet. For the model extra, prefer 3.12 or 3.13. `careof` does **not** depend on spaCy.
 
 ## Usage
 
@@ -146,7 +146,7 @@ HTML offsets refer to `careof`'s normalised text, not the original HTML byte str
 ## Design notes
 
 - **`lxml`, not BeautifulSoup.** Real parsing, real error recovery, and no extra layer between the document and the offsets.
-- **`re2`, not `re`.** Untrusted pages cannot cause catastrophic backtracking. The trade-off is no backreferences or lookaround, which the patterns avoid.
+- **`pyre2-updated` (`re2`), not `re`.** Untrusted pages cannot cause catastrophic backtracking. Fallback to Python's `re` engine is disabled. The trade-off is no backreferences or lookaround, which the patterns avoid.
 - **GLiNER directly, not `gliner_spacy`.** No spaCy dependency, no stale wrapper, and spans come back as character offsets.
 - **libpostal is a parser, not an extractor.** It expects an address, so it runs after candidate extraction, never on a whole page.
 - **Structured data wins ties.** A JSON-LD `PostalAddress` outranks anything the model produces.
