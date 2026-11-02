@@ -79,6 +79,9 @@ LEGAL_ENTITY = re2.compile(
     r"(?i)\b(?:gmbh|ag|kg|ohg|ug|e\.?\s*v\.?|inc\.?|llc|ltd\.?|"
     r"corp\.?|corporation|limited)\b"
 )
+PREMISE_NAME = re2.compile(
+    r"(?i)\b(?:house|building|tower|court|centre|center|mansion|hall|manor|lodge|estate)\b"
+)
 
 _LINE = "\n"
 
@@ -209,17 +212,33 @@ def address_line_span(
         ):
             line_start = start
 
-    # Company names commonly occupy the line just above the street address.
-    # Include one such line when it ends with a recognizable legal entity form.
+    # A company, premise name, or floor/unit line may precede the street line.
+    # Keep at most two nearby lines, and only when they look like address data.
+    previous_lines: list[tuple[int, str]] = []
     previous_end = line_start - 1
-    while previous_end >= 0:
+    while previous_end >= 0 and len(previous_lines) < 2:
         previous_start = text.rfind(_LINE, 0, previous_end) + 1
         previous = text[previous_start:previous_end].strip()
         if previous:
-            if len(previous) <= 120 and LEGAL_ENTITY.search(previous):
-                line_start = previous_start
-            break
+            previous_lines.append((previous_start, previous))
         previous_end = previous_start - 1
+
+    if previous_lines:
+        nearest_start, nearest = previous_lines[0]
+        if len(nearest) <= 120 and LEGAL_ENTITY.search(nearest):
+            line_start = nearest_start
+        elif len(nearest) <= 120 and UNIT.search(nearest):
+            line_start = nearest_start
+            if len(previous_lines) > 1:
+                premise_start, premise = previous_lines[1]
+                if (
+                    len(premise) <= 120
+                    and PREMISE_NAME.search(premise)
+                    and not NOISE.search(premise)
+                ):
+                    line_start = premise_start
+        elif len(nearest) <= 120 and PREMISE_NAME.search(nearest):
+            line_start = nearest_start
 
     first_line = text[line_start:line_end]
     complete_on_first_line = bool(POSTCODE.search(first_line)) and any(

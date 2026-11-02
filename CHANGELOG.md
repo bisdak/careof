@@ -6,7 +6,8 @@ All notable changes to `careof` are documented here. The format follows
 
 ## [Unreleased]
 
-- Added UK postcode and street-type recognition with an Ardent IFA fixture test.
+- Added UK postcode and street-type recognition, plus premise/floor-line context,
+  with an Ardent IFA fixture test.
 
 ## [0.1.0] - 2026-11-02
 

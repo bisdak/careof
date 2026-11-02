@@ -18,4 +18,6 @@ def test_extracts_ardent_uk_address() -> None:
         parser=NullParser(),
     )
 
-    assert [address.raw for address in results] == ["16 Toft Green York YO1 6JT"]
+    assert [address.raw for address in results] == [
+        "Colonia House Floor 2 16 Toft Green York YO1 6JT"
+    ]
