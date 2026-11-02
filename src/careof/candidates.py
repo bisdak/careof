@@ -215,8 +215,13 @@ def address_line_span(
             break
         previous_end = previous_start - 1
 
+    first_line = text[line_start:line_end]
+    complete_on_first_line = bool(POSTCODE.search(first_line)) and any(
+        char.isalpha() for char in first_line
+    )
+
     taken = 1
-    while taken < max_lines:
+    while taken < max_lines and not complete_on_first_line:
         next_start = line_end + 1
         next_end = text.find(_LINE, next_start)
         if next_end == -1:

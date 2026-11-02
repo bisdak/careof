@@ -68,6 +68,20 @@ def test_german_street_suffix_after_house_name() -> None:
     assert "Dreifertstraße 12 03044 Cottbus" in raw
 
 
+def test_complete_address_line_does_not_absorb_following_hours() -> None:
+    source = """<html><body>
+    <p>343 Kingstown Road, Richmond, Rhode Island 02812, United States</p>
+    <h4>Hours</h4>
+    <p>Mon<br>07:00 am – 06:00 pm</p>
+    </body></html>"""
+    results = extract(source, "text/html", extractor="heuristic", parser=NullParser())
+
+    assert "343 Kingstown Road, Richmond, Rhode Island 02812, United States" in {
+        address.raw for address in results
+    }
+    assert all("Hours" not in address.raw and "Mon" not in address.raw for address in results)
+
+
 def test_phone_only_block_is_not_an_address() -> None:
     results = extract(
         "<html><body><p>+63 2 1234 5678</p></body></html>",
