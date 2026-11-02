@@ -23,6 +23,12 @@ HOUSE_NUMBER = r"\b\d{1,6}[A-Za-z]?(?:[-/]\d{1,6}[A-Za-z]?)?\b"
 STRONG = re2.compile(
     rf"(?i){HOUSE_NUMBER}[^\n]{{0,80}}?\b{STREET_SUFFIX}\b"
 )
+GERMAN_STREET = re2.compile(
+    r"(?i)\b(?:(?:[\p{L}][\p{L}.'-]*[ \t]+){0,2}"
+    r"(?:straße|str\.?|weg|chaussee|allee|platz|ring|gasse|damm|ufer)|"
+    r"[\p{L}][\p{L}.'-]*(?:straße|str\.?))"
+    r"[ \t]+\d{1,6}[a-z]?(?:[-/]\d{1,6}[a-z]?)?\b"
+)
 POBOX = re2.compile(r"(?i)\b(?:p\.?\s*o\.?\s*box|post office box)\s*\d+\b")
 UNIT = re2.compile(
     r"(?i)\b(?:unit|suite|ste\.?|floor|fl\.?|room|rm\.?|bldg\.?|building|tower)"
@@ -51,7 +57,7 @@ TAGALOG_LANDMARK = re2.compile(
 )
 NOISE = re2.compile(
     r"(?i)@|\+?\d[\d ()-]{5,}\d|"
-    r"\b(?:tel|telephone|phone|fax|mobile|email|home|about|contact|menu|"
+    r"\b(?:tel|telefon|telefax|telephone|phone|fax|mobile|email|home|about|contact|menu|"
     r"login|sign in|privacy|terms|subscribe)\b"
 )
 TRAILING_PUNCT = re2.compile(r"\s[.,;:]$")
@@ -66,6 +72,8 @@ _LINE = "\n"
 def score_block(text: str) -> float:
     score = 0.0
     if STRONG.search(text):
+        score += 4.0
+    if GERMAN_STREET.search(text):
         score += 4.0
     if PH.search(text):
         score += 2.5
@@ -90,6 +98,8 @@ def _intervals(block: Block, text: str, score: float) -> list[tuple[int, int]]:
     """Windows around every strong signal in the block, with context."""
     found: list[tuple[int, int]] = []
     for match in STRONG.finditer(block.text):
+        found.append((match.start(), match.end()))
+    for match in GERMAN_STREET.finditer(block.text):
         found.append((match.start(), match.end()))
     for match in PH.finditer(block.text):
         found.append((match.start(), match.end()))

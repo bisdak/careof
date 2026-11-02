@@ -56,6 +56,26 @@ def test_philippine_landmark_address() -> None:
     assert "Brgy. San Lorenzo" in results[0].raw
 
 
+def test_german_street_suffix_after_house_name() -> None:
+    source = """<html lang="de"><body>
+    <p>Sonnenburger Weg 3<br>16269 Wriezen<br>Tel. 033456 / 40-0</p>
+    <p>Krankenhaus Märkisch-Oderland GmbH<br>Prötzeler Chaussee 5<br>
+    15344 Strausberg<br>Telefon: 03341 / 52-0</p>
+    <p>Dreifertstraße 12<br>03044 Cottbus</p>
+    </body></html>"""
+    results = extract(
+        source,
+        "text/html",
+        extractor="heuristic",
+        parser=NullParser(),
+        country="de",
+    )
+    raw = {address.raw for address in results}
+    assert "Sonnenburger Weg 3 16269 Wriezen" in raw
+    assert "Prötzeler Chaussee 5 15344 Strausberg" in raw
+    assert "Dreifertstraße 12 03044 Cottbus" in raw
+
+
 def test_phone_only_block_is_not_an_address() -> None:
     results = extract(
         "<html><body><p>+63 2 1234 5678</p></body></html>",

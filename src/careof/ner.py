@@ -15,6 +15,7 @@ from typing import Protocol
 import re2
 
 from .candidates import (
+    GERMAN_STREET,
     LANDMARK,
     PH,
     POBOX,
@@ -46,7 +47,7 @@ class HeuristicExtractor:
         self, text: str, labels: Sequence[str] = DEFAULT_LABELS, threshold: float = 0.4
     ) -> list[Span]:
         found: list[Span] = []
-        patterns = (STRONG, POBOX)
+        patterns = (STRONG, GERMAN_STREET, POBOX)
         for pattern in patterns:
             for match in pattern.finditer(text):
                 start, end = address_line_span(text, match.start(), match.end())
