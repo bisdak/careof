@@ -210,8 +210,8 @@ python -m build
 twine check dist/*
 
 # 2. Tag the release; CI publishes to PyPI via Trusted Publishing.
-git tag v0.1.0
-git push origin v0.1.0
+git tag v0.1.1
+git push origin v0.1.1
 ```
 
 One-time setup on PyPI: add a trusted publisher at
