@@ -4,6 +4,7 @@ from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
 
+from .candidates import LEGAL_ENTITY
 from .parse import CORE, NullParser, PostalParser, normalize_components, normalize_key
 from .schema import Address, Source, ordered
 
@@ -105,6 +106,10 @@ def _similar(a: Address, b: Address) -> bool:
 
 
 def _absorb(target: Address, extra: Address) -> None:
+    if LEGAL_ENTITY.search(extra.raw) and not LEGAL_ENTITY.search(target.raw):
+        target.raw = extra.raw
+        target.sources = extra.sources + target.sources
+
     for key, value in extra.components.items():
         current = target.components.get(key)
         if not current:

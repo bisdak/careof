@@ -64,7 +64,7 @@ def test_german_street_suffix_after_house_name() -> None:
     )
     raw = {address.raw for address in results}
     assert "Sonnenburger Weg 3 16269 Wriezen" in raw
-    assert "Prötzeler Chaussee 5 15344 Strausberg" in raw
+    assert "Krankenhaus Märkisch-Oderland GmbH Prötzeler Chaussee 5 15344 Strausberg" in raw
     assert "Dreifertstraße 12 03044 Cottbus" in raw
 
 

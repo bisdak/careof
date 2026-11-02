@@ -58,6 +58,10 @@ POSTCODE_PERIOD = re2.compile(r"\b\d{4,5}(?:-\d{4})?\.")
 NOISE_INLINE = re2.compile(
     r"(?i)\s(?:contact|email|e-mail|tel|telephone|phone|fax|mobile)\b.*$"
 )
+LEGAL_ENTITY = re2.compile(
+    r"(?i)\b(?:gmbh|ag|kg|ohg|ug|e\.?\s*v\.?|inc\.?|llc|ltd\.?|"
+    r"corp\.?|corporation|limited)\b"
+)
 
 _LINE = "\n"
 
@@ -177,7 +181,7 @@ def address_line_span(
 
     # "Our office is at 123 Main St" should yield the address, not the
     # sentence. Keep the prefix when it is a label ("Address:") or carries
-    # unit/landmark information ("Unit 4B,", "sa likod ng simbahan").
+    # unit/landmark information ("Unit 4B,", "near the main entrance").
     prefix = text[line_start:start]
     if prefix.strip():
         words = prefix.split()
@@ -188,6 +192,18 @@ def address_line_span(
         ):
             line_start = start
 
+    # Company names commonly occupy the line just above the street address.
+    # Include one such line when it ends with a recognizable legal entity form.
+    previous_end = line_start - 1
+    while previous_end >= 0:
+        previous_start = text.rfind(_LINE, 0, previous_end) + 1
+        previous = text[previous_start:previous_end].strip()
+        if previous:
+            if len(previous) <= 120 and LEGAL_ENTITY.search(previous):
+                line_start = previous_start
+            break
+        previous_end = previous_start - 1
+
     taken = 1
     while taken < max_lines:
         next_start = line_end + 1
@@ -196,7 +212,10 @@ def address_line_span(
             next_end = len(text)
         following = text[next_start:next_end].strip()
         if not following:
-            break
+            line_end = next_end
+            if next_end >= len(text):
+                break
+            continue
         if NOISE.search(following):
             break
         if STRONG.search(following):
@@ -205,6 +224,8 @@ def address_line_span(
             break
         line_end = next_end
         taken += 1
+        if POSTCODE.search(following) and any(char.isalpha() for char in following):
+            break
 
     segment = text[line_start:line_end]
     body = segment.strip()

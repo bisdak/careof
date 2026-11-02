@@ -20,7 +20,7 @@ def test_extracts_addresses_from_krankenhaus_impressum() -> None:
 
     found = {address.raw for address in results}
     assert found == {
-        "Prötzeler Chaussee 5 15344 Strausberg",
+        "Krankenhaus Märkisch-Oderland GmbH Prötzeler Chaussee 5 15344 Strausberg",
         "Sonnenburger Weg 3 16269 Wriezen",
         "Dreifertstraße 12 03044 Cottbus",
     }

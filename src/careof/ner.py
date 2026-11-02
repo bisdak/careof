@@ -17,6 +17,7 @@ import re2
 from .candidates import (
     GERMAN_STREET,
     LANDMARK,
+    LEGAL_ENTITY,
     POBOX,
     POSTAL_5,
     STRONG,
@@ -150,7 +151,7 @@ def plausible(raw: str) -> bool:
         return False
     words = raw.split()
     if len(words) > 6:
-        if not COMMA_SEP.search(raw):
+        if not COMMA_SEP.search(raw) and not LEGAL_ENTITY.search(raw):
             return False
         if len(words) > 10 and not POSTAL_5.search(raw[-40:]):
             return False
