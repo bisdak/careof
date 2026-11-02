@@ -55,6 +55,12 @@ Optional model:
 pip install "careof[model]"    # gliner + torch
 ```
 
+Optional URL fetching:
+
+```console
+pip install "careof[fetch]"    # httpx, used by the careof-url command
+```
+
 Optional parser:
 
 ```console
@@ -138,6 +144,15 @@ careof page.html --extractor heuristic --ndjson
 ```
 
 The REST URL can also be set once with `export CAREOF_LIBPOSTAL_URL=http://127.0.0.1:8080`.
+
+To fetch a page directly by URL, install the optional fetch extra and use the separate command:
+
+```console
+pip install "careof[fetch]"
+careof-url https://example.com/contact --country us --extractor heuristic
+```
+
+`careof-url` follows redirects, uses the response content type, and defaults to a 20-second timeout and 10 MiB response limit. Override these with `--timeout` and `--max-bytes`.
 
 `--extractor none` keeps only structured matches. JSON is pretty-printed by default; `--ndjson` emits one object per line.
 

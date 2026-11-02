@@ -6,6 +6,8 @@ All notable changes to `careof` are documented here. The format follows
 
 ## [Unreleased]
 
+- Added the optional `fetch` extra and `careof-url` command for fetching pages over HTTP(S).
+
 ## [0.1.0] - 2026-11-02
 
 ### Added
