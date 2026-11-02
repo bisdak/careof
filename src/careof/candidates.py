@@ -35,8 +35,9 @@ UNIT = re2.compile(
     r"(?i)\b(?:(?:unit|suite|floor|room|building|tower)\b|(?:ste|fl|rm|bldg)\.?)"
     r"\s*#?\s*[A-Za-z0-9-]+\b"
 )
-POSTCODE = re2.compile(r"\b\d{4,5}(?:-\d{4})?\b")
-POSTAL_5 = re2.compile(r"\b\d{5}(?:-\d{4})?\b")
+POSTCODE = re2.compile(
+    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b)"
+)
 _COUNTRY_NAMES = {
     name
     for country in pycountry.countries
@@ -65,7 +66,9 @@ NOISE = re2.compile(
     r"login|sign in|privacy|terms|subscribe)\b"
 )
 TRAILING_PUNCT = re2.compile(r"\s[.,;:]$")
-POSTCODE_PERIOD = re2.compile(r"\b\d{4,5}(?:-\d{4})?\.")
+POSTCODE_PERIOD = re2.compile(
+    r"(?i)(?:\b\d{4,5}(?:-\d{4})?\b|\b[A-Z]\d[A-Z][ -]?\d[A-Z]\d\b)\."
+)
 NOISE_INLINE = re2.compile(
     r"(?i)\s(?:contact|email|e-mail|tel|telephone|phone|fax|mobile)\b.*$"
 )
