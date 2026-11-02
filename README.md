@@ -152,6 +152,10 @@ pip install "careof[fetch]"
 careof-url https://example.com/contact --country us --extractor heuristic
 ```
 
+<video src="https://github.com/bisdak/careof/raw/refs/heads/main/assets/careof.webm" width="100%" autoplay loop muted playsinline controls>
+  <a href="https://github.com/bisdak/careof/raw/refs/heads/main/assets/careof.webm">Watch the careof-url demo</a>
+</video>
+
 `careof-url` follows redirects, uses the response content type, and defaults to a 20-second timeout and 10 MiB response limit. Override these with `--timeout` and `--max-bytes`.
 
 `--extractor none` keeps only structured matches. JSON is pretty-printed by default; `--ndjson` emits one object per line.
