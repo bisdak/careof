@@ -37,23 +37,16 @@ UNIT = re2.compile(
 POSTCODE = re2.compile(r"\b\d{4,5}(?:-\d{4})?\b")
 POSTAL_5 = re2.compile(r"\b\d{5}(?:-\d{4})?\b")
 COUNTRY = re2.compile(
-    r"(?i)\b(?:philippines|pilipinas|united states|usa|canada|australia|"
+    r"(?i)\b(?:philippines|united states|usa|canada|australia|"
     r"united kingdom|uk|singapore|japan|malaysia|indonesia|thailand|"
     r"vietnam|india|new zealand|germany|france|spain|italy|netherlands)\b"
-)
-PH = re2.compile(
-    r"(?i)\b(?:barangay|brgy\.?|purok|sitio|city of|municipality of)\b"
 )
 CONTACT = re2.compile(
     r"(?i)\b(?:address|contact|office|headquarters|location|visit us|"
     r"find us|where we are|mailing)\b"
 )
 LANDMARK = re2.compile(
-    r"(?i)\b(?:sa likod ng|sa tabi ng|sa harap ng|katapat ng|malapit sa|"
-    r"near|beside|across from|opposite)\b"
-)
-TAGALOG_LANDMARK = re2.compile(
-    r"(?i)\b(?:sa likod ng|sa tabi ng|sa harap ng|katapat ng|malapit sa)\b"
+    r"(?i)\b(?:near|beside|across from|opposite)\b"
 )
 NOISE = re2.compile(
     r"(?i)@|\+?\d[\d ()-]{5,}\d|"
@@ -75,8 +68,6 @@ def score_block(text: str) -> float:
         score += 4.0
     if GERMAN_STREET.search(text):
         score += 4.0
-    if PH.search(text):
-        score += 2.5
     if POBOX.search(text):
         score += 2.0
     if UNIT.search(text):
@@ -100,8 +91,6 @@ def _intervals(block: Block, text: str, score: float) -> list[tuple[int, int]]:
     for match in STRONG.finditer(block.text):
         found.append((match.start(), match.end()))
     for match in GERMAN_STREET.finditer(block.text):
-        found.append((match.start(), match.end()))
-    for match in PH.finditer(block.text):
         found.append((match.start(), match.end()))
     for match in POBOX.finditer(block.text):
         found.append((match.start(), match.end()))

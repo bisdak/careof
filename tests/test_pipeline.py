@@ -48,14 +48,6 @@ def test_markdown_code_fences_are_ignored() -> None:
     assert "Fake" not in results[0].raw
 
 
-def test_philippine_landmark_address() -> None:
-    text = "Find us: Sa likod ng simbahan, Brgy. San Lorenzo, Makati City."
-    results = extract(text, extractor="heuristic", parser=NullParser())
-    assert results
-    assert results[0].raw.startswith("Sa likod ng simbahan")
-    assert "Brgy. San Lorenzo" in results[0].raw
-
-
 def test_german_street_suffix_after_house_name() -> None:
     source = """<html lang="de"><body>
     <p>Sonnenburger Weg 3<br>16269 Wriezen<br>Tel. 033456 / 40-0</p>

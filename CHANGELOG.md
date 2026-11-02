@@ -21,4 +21,3 @@ All notable changes to `careof` are documented here. The format follows
 - Optional libpostal parsing and address expansion.
 - Deduplication, confidence scoring, provenance, and ranked output.
 - `careof` CLI and `python -m careof` entry points.
-- Philippine landmark and barangay signals.

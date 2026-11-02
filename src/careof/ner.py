@@ -17,11 +17,9 @@ import re2
 from .candidates import (
     GERMAN_STREET,
     LANDMARK,
-    PH,
     POBOX,
     POSTAL_5,
     STRONG,
-    TAGALOG_LANDMARK,
     address_line_span,
 )
 from .schema import Span
@@ -55,13 +53,6 @@ class HeuristicExtractor:
                 if plausible(raw):
                     found.append(Span(start=start, end=end, text=raw, score=0.55))
 
-        # Philippine landmark addresses ("sa likod ng simbahan") have no
-        # street number, so they need their own pass.
-        for match in PH.finditer(text):
-            start, end = address_line_span(text, match.start(), match.end())
-            raw = text[start:end].strip()
-            if plausible(raw):
-                found.append(Span(start=start, end=end, text=raw, score=0.4))
         for match in LANDMARK.finditer(text):
             start, end = address_line_span(text, match.start(), match.end())
             raw = text[start:end].strip()
@@ -151,9 +142,7 @@ def plausible(raw: str) -> bool:
         return False
     if not any(ch.isalpha() for ch in raw):
         return False
-    if not any(ch.isdigit() for ch in raw) and not (
-        PH.search(raw) or LANDMARK.search(raw)
-    ):
+    if not any(ch.isdigit() for ch in raw) and not LANDMARK.search(raw):
         return False
     if "@" in raw and not STRONG.search(raw) and "\n" not in raw:
         return False
@@ -161,13 +150,9 @@ def plausible(raw: str) -> bool:
         return False
     words = raw.split()
     if len(words) > 6:
-        if not COMMA_SEP.search(raw) and not TAGALOG_LANDMARK.search(raw):
+        if not COMMA_SEP.search(raw):
             return False
-        if (
-            len(words) > 10
-            and not POSTAL_5.search(raw[-40:])
-            and not TAGALOG_LANDMARK.search(raw)
-        ):
+        if len(words) > 10 and not POSTAL_5.search(raw[-40:]):
             return False
     return True
 

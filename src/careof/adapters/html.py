@@ -88,7 +88,7 @@ _HS = re2.compile(r"[ \t]+")
 _NEWLINES = re2.compile(r"\n{2,}")
 _ADDRESS_HINT = re2.compile(
     r"(?i)\b(?:street|st\.?|avenue|ave\.?|road|rd\.?|boulevard|blvd\.?|"
-    r"lane|drive|unit|suite|floor|barangay|brgy\.?|purok|sitio|city|"
+    r"lane|drive|unit|suite|floor|city|"
     r"province|address|po box)\b"
 )
 
